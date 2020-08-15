@@ -21,7 +21,6 @@ def services(action, serviceName):
             return "Not exists"
 
     time.sleep(1)
-    servicesFrame.grid_forget()
     printServices()
 
 
