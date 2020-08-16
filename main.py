@@ -31,11 +31,15 @@ class Settings():
                 settings = json.loads(file.read())
         except:
             settings = {
-                "services": []
+                "services": [{
+                    "name": "Display service name",
+                    "serviceName": "Service name"
+
+                }]
             }
 
             with open("settings.json", "w", encoding='utf-8') as file:
-                data = json.dumps(settings)
+                data = json.dumps(settings, indent=True)
                 file.write(data)
         finally:
             return settings
@@ -47,7 +51,7 @@ class Settings():
             settings[setting] = value
 
             with open("settings.json", "w", encoding='utf-8') as file:
-                data = json.dumps(settings)
+                data = json.dumps(settings, indent=True)
                 file.write(data)
 
                 return True
@@ -63,9 +67,35 @@ root.title("Windows Service Control")
 servicesFrame = tk.Frame(root)
 
 
+def editServices():
+    def saveServices():
+        settings.setSetting('services', json.loads(
+            servicesText.get(1.0, tk.END).rstrip()))
+        printServices()
+        editWindow.destroy()
+
+    editWindow = tk.Toplevel(root)
+    editWindowFrame = tk.Frame(editWindow)
+
+    servicesList = settings.getSettings()['services']
+
+    servicesText = tk.Text(editWindowFrame, height=40,
+                           width=80)
+    servicesText.insert(1.0, json.dumps(servicesList, indent=True))
+    servicesText.grid(row=0, column=0, columnspan=2)
+
+    tk.Button(editWindowFrame, text='Save',
+              command=saveServices).grid(row=1, column=0)
+    tk.Button(editWindowFrame, text='Close',
+              command=lambda: editWindow.destroy()).grid(row=1, column=1)
+    editWindowFrame.pack()
+
+
 def printServices():
     servicesList = settings.getSettings()['services']
-    servicesFrame.grid_forget()
+
+    for widget in servicesFrame.winfo_children():
+        widget.destroy()
 
     for i in range(len(servicesList)):
 
@@ -81,20 +111,18 @@ def printServices():
         tk.Button(servicesFrame,
                   text='Start' if serviceStatus != 'Running' else 'Stop',
                   width=5,
-                  command=lambda: services('start' if serviceStatus != 'Running' else 'stop', currentService['serviceName'])).grid(row=i, column=2)
+                  command=lambda action='start' if serviceStatus != 'Running' else 'stop', targetService=currentService['serviceName']: services(action, targetService)).grid(row=i, column=2)
 
         tk.Button(servicesFrame, text='Restart', width=5,
-                  command=lambda: services('restart', currentService['serviceName'])).grid(row=i, column=3)
-
-        tk.Button(servicesFrame, text='Remove from list',
-                  width=15).grid(row=i, column=4)
+                  command=lambda targetService=currentService['serviceName']: services('restart', targetService)).grid(row=i, column=3)
 
     servicesFrame.grid(row=0, column=0)
 
 
 printServices()
 
-tk.Button(root, text="Add new service").grid(sticky='we')
+tk.Button(root, text="Edit services",
+          command=editServices).grid(sticky='we')
 root.grid_columnconfigure(0, weight=1)
 
 root.mainloop()
