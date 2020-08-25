@@ -1,24 +1,8 @@
 {
  "services": [
   {
-   "name": "Apache",
-   "serviceName": "Apache2.4"
-  },
-  {
-   "name": "MySQL",
-   "serviceName": "MySQL"
-  },
-  {
-   "name": "MongoDB",
-   "serviceName": "MongoDB"
-  },
-  {
-   "name": "Sonarr",
-   "serviceName": "Sonarr"
-  },
-  {
-   "name": "Jackett",
-   "serviceName": "Jackett"
+   "name": "Example service",
+   "serviceName": "Example service"
   }
  ]
 }
