@@ -1,27 +1,30 @@
 import win32serviceutil
 import time
 import tkinter as tk
+from tkinter import messagebox
 import json
 
 
 def services(action, serviceName):
-    if action == 'start':
-        win32serviceutil.StartService(serviceName)
-    elif action == 'stop':
-        win32serviceutil.StopService(serviceName)
-    elif action == 'restart':
-        win32serviceutil.RestartService(serviceName)
-    elif action == 'status':
-        try:
-            if win32serviceutil.QueryServiceStatus(serviceName)[1] == 4:
-                return "Running"
-            else:
-                return "Not running"
-        except:
-            return "Not exists"
+    try:
+        if action == 'start':
+            win32serviceutil.StartService(serviceName)
+        elif action == 'stop':
+            win32serviceutil.StopService(serviceName)
+        elif action == 'restart':
+            win32serviceutil.RestartService(serviceName)
+        elif action == 'status':
+            try:
+                if win32serviceutil.QueryServiceStatus(serviceName)[1] == 4:
+                    return "Running"
+                else:
+                    return "Not running"
+            except:
+                return "Not exists"
+    except Exception as e:
+        messagebox.showerror("Error", e)
 
-    time.sleep(1)
-    printServices()
+    root.after(2000, printServices)
 
 
 class Settings():
